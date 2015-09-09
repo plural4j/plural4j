@@ -1,4 +1,4 @@
-package mini.plurals;
+package mini.plural;
 
 /**
  * TODO
