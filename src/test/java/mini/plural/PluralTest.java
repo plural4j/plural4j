@@ -40,6 +40,17 @@ public class PluralTest {
         Assert.assertEquals("- стульев", p.pl("- стул", 120));
     }
 
+    @Test
+    public void checkNoPluralForm() {
+        Plural p = new Plural(dictionary);
+        Assert.assertEquals("гд", p.pl("гд", 1));
+        Assert.assertEquals("гд", p.pl("гд", 3));
+        Assert.assertEquals("гд", p.pl("гд", 7));
+        Assert.assertEquals("", p.pl("", 0));
+        Assert.assertEquals("", p.pl("", 3));
+        Assert.assertEquals("", p.pl("", 7));
+    }
+
     private static String load(String fileName) throws IOException {
         InputStreamReader reader = new InputStreamReader(PluralTest.class.getResourceAsStream("/" + fileName), "UTF-8");
         try {
