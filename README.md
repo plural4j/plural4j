@@ -1,4 +1,4 @@
-__mini-plural__ Utility to generate plural forms for Russian words
+__mini-plural__  - is a Java utility to generate plural word forms.
 
 __mini-plural__  - это Java утилита для склонения слов по формам множественного числа.
 
@@ -13,15 +13,16 @@ mvn -DskipTests=true clean package install
 ## Usage
 
 ```java
-Plural p = new Plural();
+Plural p = new Plural(PluralForms.RUSSIAN, russianWords);
 p.pl("год", 1) ➟ "год"
 p.pl("год", 2) ➟ "года"
 p.pl("год", 5) ➟ "лет"
+p.pl("год", 0) ➟ "лет"
 ```
 
-### Конфигурация
+### Requirements
 
-TODO:
+Java 1.6+
 
 
 ### License
