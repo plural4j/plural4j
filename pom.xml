@@ -8,7 +8,7 @@
     <packaging>jar</packaging>
 
     <name>mini-plural</name>
-    <description>Utility to generate plural forms for Russian words.</description>
+    <description>Java utility to generate plural word forms.</description>
     <url>https://github.com/mfursov/mini-plural</url>
 
     <properties>
