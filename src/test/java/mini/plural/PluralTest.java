@@ -7,42 +7,57 @@ import org.junit.Test;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
+import static mini.plural.Plural.Word;
+import static mini.plural.Plural.parse;
+
 public class PluralTest {
 
-    private Word[] dictionary;
+    private Word[] russianWords;
+    private Word[] englishWords;
 
     @Before
     public void setUp() throws IOException {
-        String dictionaryContent = load("dictionary.txt");
-        dictionary = Plural.parse(dictionaryContent);
+        russianWords = parse(load("dictionary-ru.txt"));
+        englishWords = parse(load("dictionary-en.txt"));
     }
 
-    //FIXME: add tests for dictionary parsing & errors.
+    //FIXME: add tests for russianWords parsing & errors.
 
     @Test
-    public void checkPluralForm() {
-        Plural p = new Plural(dictionary);
+    public void checkRussianPluralForm() {
+        Plural p = new Plural(PluralForms.RUSSIAN, russianWords);
         Assert.assertEquals("год", p.pl("год", 1));
         Assert.assertEquals("года", p.pl("год", 3));
         Assert.assertEquals("лет", p.pl("год", 7));
         Assert.assertEquals("лет", p.pl("год", 10));
         Assert.assertEquals("лет", p.pl("год", 100));
+        Assert.assertEquals("лет", p.pl("год", 0));
     }
 
     @Test
-    public void checkPluralFormWithPrefix() {
-        Plural p = new Plural(dictionary);
-        Assert.assertEquals(" стул", p.pl(" стул", 1));
-        Assert.assertEquals("  стула", p.pl("  стул", 2));
-        Assert.assertEquals("-стула", p.pl("-стул", 3));
-        Assert.assertEquals("--стульев", p.pl("--стул", 5));
-        Assert.assertEquals(" -стульев", p.pl(" -стул", 8));
-        Assert.assertEquals("- стульев", p.pl("- стул", 120));
+    public void checkEnglishPluralForm() {
+        Plural p = new Plural(PluralForms.ENGLISH, englishWords);
+        Assert.assertEquals("year", p.pl("year", 1));
+        Assert.assertEquals("years", p.pl("year", 3));
+        Assert.assertEquals("months", p.pl("month", 7));
+        Assert.assertEquals("hours", p.pl("hour", 10));
+        Assert.assertEquals("clients", p.pl("client", 0));
+    }
+
+    @Test
+    public void checkRussianPluralFormWithPrefix() {
+        Plural p = new Plural(PluralForms.RUSSIAN, russianWords);
+        Assert.assertEquals(" клиент", p.pl(" клиент", 1));
+        Assert.assertEquals("  клиента", p.pl("  клиент", 2));
+        Assert.assertEquals("-клиента", p.pl("-клиент", 3));
+        Assert.assertEquals("--клиентов", p.pl("--клиент", 5));
+        Assert.assertEquals(" -клиентов", p.pl(" -клиент", 8));
+        Assert.assertEquals("- клиентов", p.pl("- клиент", 120));
     }
 
     @Test
     public void checkNoPluralForm() {
-        Plural p = new Plural(dictionary);
+        Plural p = new Plural(PluralForms.RUSSIAN, russianWords);
         Assert.assertEquals("гд", p.pl("гд", 1));
         Assert.assertEquals("гд", p.pl("гд", 3));
         Assert.assertEquals("гд", p.pl("гд", 7));

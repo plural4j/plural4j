@@ -7,33 +7,29 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * TODO comment & cleanup
+ * TODO:
  */
 public class Plural {
-    /**
-     * There are 3 plural word forms in Russian.
-     */
-    public static final int PLURAL_WORD_FORMS = 3;
-    private static final String COMMENT_PREFIX = "#";
+    public static final String COMMENT_PREFIX = "#";
 
-    private final Map<String, Word> dictionary = new HashMap<String, Word>();
+    private final Form form;
+    private final Map<String, Word> words = new HashMap<String, Word>();
 
-    public Plural() {
-        this(Dictionary.WORDS);
-    }
-
-    public Plural(Word[] words) {
+    public Plural(Form form, Word[] words) {
+        this.form = form;
         if (words == null || words.length == 0) {
             throw new IllegalArgumentException("No words provided: " + Arrays.toString(words));
         }
         for (Word w : words) {
-            if (dictionary.containsKey(w.wordForms[0])) {
+            if (w.wordForms.length != form.nPlurals) {
+                throw new IllegalArgumentException("Illegal count of word forms: " + Arrays.toString(w.wordForms));
+            }
+            if (this.words.containsKey(w.wordForms[0])) {
                 throw new IllegalArgumentException("Duplicate word: " + w.wordForms[0]);
             }
-            dictionary.put(w.wordForms[0], w);
+            this.words.put(w.wordForms[0], w);
         }
     }
-
 
     public String pl(String word, int n) {
         int wordStartIdx = 0;
@@ -44,11 +40,11 @@ public class Plural {
             }
             wordStartIdx++;
         }
-        Word w = dictionary.get(wordStartIdx > 0 ? word.substring(wordStartIdx) : word);
+        Word w = words.get(wordStartIdx > 0 ? word.substring(wordStartIdx) : word);
         if (w == null) {
             return word;
         }
-        int formIdx = getPluralWordFormIdx(n);
+        int formIdx = form.getPluralWordFormIdx(n);
         String resultWord = w.wordForms[formIdx];
         return wordStartIdx > 0 ? word.substring(0, wordStartIdx) + resultWord : resultWord;
     }
@@ -57,9 +53,6 @@ public class Plural {
         return c == ' ' || c == '-';
     }
 
-    private int getPluralWordFormIdx(int n) {
-        return (n % 10 == 1 && n % 100 != 11 ? 0 : n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 10 || n % 100 >= 20) ? 1 : 2);
-    }
 
     public static Word[] parse(String dictionary) {
         String lines[] = dictionary.split("\\r?\\n");
@@ -73,4 +66,33 @@ public class Plural {
         }
         return words.toArray(new Word[words.size()]);
     }
+
+    /**
+     * TODO:
+     * See http://localization-guide.readthedocs.org/en/latest/l10n/pluralforms.html for details.
+     */
+    public static abstract class Form {
+        public final int nPlurals;
+
+        public Form(int nPlurals) {
+            this.nPlurals = nPlurals;
+        }
+
+        public abstract int getPluralWordFormIdx(int n);
+    }
+
+    /**
+     * TODO:
+     */
+    public static class Word {
+        final String[] wordForms;
+
+        public Word(String[] wordForm) {
+            if (wordForm == null || wordForm.length == 0) {
+                throw new IllegalArgumentException("Illegal word form: " + Arrays.toString(wordForm));
+            }
+            this.wordForms = wordForm;
+        }
+    }
+
 }

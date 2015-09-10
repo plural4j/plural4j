@@ -1,0 +1,17 @@
+#Format: 1 year, 2 years
+
+# Time
+second,seconds
+minute,minutes
+hour,hours
+day,days
+week,weeks
+month,months
+quoter,quarters
+year,years
+
+# другие полезные слова
+user,users
+client,clients
+retry,retries
+
