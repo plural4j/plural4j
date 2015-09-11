@@ -7,14 +7,67 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * TODO:
+ * Plural  - Utility class to generate plural word forms. Designed without any dependencies
+ * for easy integration into other projects.
+ * <p/>
+ * Usage:
+ * Plural p = new Plural(Plural.RUSSIAN, russianWords);
+ * p.pl("год", 1) ➟ "год"
+ * p.pl("год", 2) ➟ "года"
+ * p.pl("год", 5) ➟ "лет"
+ * p.pl("год", 0) ➟ "лет"
+ * <p/>
+ * <p/>
+ * If you need plural forms other languages, except embedded English, German and Russian,
+ * check http://localization-guide.readthedocs.org/en/latest/l10n/pluralforms.html
+ * and implement your own one-liner Form class.
  */
-public class Plural {
+public final class Plural {
+    /**
+     * In word dictionaries line is considered as a comment and ignored if starts with '#'.
+     */
     public static final String COMMENT_PREFIX = "#";
 
+    /**
+     * Plural form for English language.
+     */
+    public static final Form ENGLISH = new Plural.Form(2) {
+        public int getPluralWordFormIdx(int n) {
+            return n == 1 ? 0 : 1;
+        }
+    };
+
+    /**
+     * Plural form for German language.
+     */
+    public static final Form GERMAN = ENGLISH;
+
+
+    /**
+     * Plural form for Russian language.
+     */
+    public static final Form RUSSIAN = new Plural.Form(3) {
+        public int getPluralWordFormIdx(int n) {
+            return (n % 10 == 1 && n % 100 != 11 ? 0 : n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 10 || n % 100 >= 20) ? 1 : 2);
+        }
+    };
+
+    /**
+     * The form to use.
+     */
     private final Form form;
+
+    /**
+     * Dictionary. All forms by 1-st word form.
+     */
     private final Map<String, Word> words = new HashMap<String, Word>();
 
+    //    TODO
+    public Plural(Form form, String words) {
+        this(form, parse(words));
+    }
+
+    //    TODO
     public Plural(Form form, Word[] words) {
         this.form = form;
         if (words == null || words.length == 0) {
@@ -31,6 +84,7 @@ public class Plural {
         }
     }
 
+    //    TODO
     public String pl(String word, int n) {
         int wordStartIdx = 0;
         while (wordStartIdx < word.length()) {
@@ -49,11 +103,13 @@ public class Plural {
         return wordStartIdx > 0 ? word.substring(0, wordStartIdx) + resultWord : resultWord;
     }
 
+    //TODO
     private boolean isSpaceCharacter(char c) {
         return c == ' ' || c == '-';
     }
 
 
+    // TODO
     public static Word[] parse(String dictionary) {
         String lines[] = dictionary.split("\\r?\\n");
         List<Word> words = new ArrayList<Word>();

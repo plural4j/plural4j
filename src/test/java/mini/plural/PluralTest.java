@@ -25,7 +25,7 @@ public class PluralTest {
 
     @Test
     public void checkRussianPluralForm() {
-        Plural p = new Plural(PluralForms.RUSSIAN, russianWords);
+        Plural p = new Plural(Plural.RUSSIAN, russianWords);
         Assert.assertEquals("год", p.pl("год", 1));
         Assert.assertEquals("года", p.pl("год", 3));
         Assert.assertEquals("лет", p.pl("год", 7));
@@ -36,7 +36,7 @@ public class PluralTest {
 
     @Test
     public void checkEnglishPluralForm() {
-        Plural p = new Plural(PluralForms.ENGLISH, englishWords);
+        Plural p = new Plural(Plural.ENGLISH, englishWords);
         Assert.assertEquals("year", p.pl("year", 1));
         Assert.assertEquals("years", p.pl("year", 3));
         Assert.assertEquals("months", p.pl("month", 7));
@@ -46,7 +46,7 @@ public class PluralTest {
 
     @Test
     public void checkRussianPluralFormWithPrefix() {
-        Plural p = new Plural(PluralForms.RUSSIAN, russianWords);
+        Plural p = new Plural(Plural.RUSSIAN, russianWords);
         Assert.assertEquals(" клиент", p.pl(" клиент", 1));
         Assert.assertEquals("  клиента", p.pl("  клиент", 2));
         Assert.assertEquals("-клиента", p.pl("-клиент", 3));
@@ -57,7 +57,7 @@ public class PluralTest {
 
     @Test
     public void checkNoPluralForm() {
-        Plural p = new Plural(PluralForms.RUSSIAN, russianWords);
+        Plural p = new Plural(Plural.RUSSIAN, russianWords);
         Assert.assertEquals("гд", p.pl("гд", 1));
         Assert.assertEquals("гд", p.pl("гд", 3));
         Assert.assertEquals("гд", p.pl("гд", 7));

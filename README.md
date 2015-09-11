@@ -13,7 +13,7 @@ mvn -DskipTests=true clean package install
 ## Usage
 
 ```java
-Plural p = new Plural(PluralForms.RUSSIAN, russianWords);
+Plural p = new Plural(Plural.RUSSIAN, russianWords);
 p.pl("год", 1) ➟ "год"
 p.pl("год", 2) ➟ "года"
 p.pl("год", 5) ➟ "лет"
