@@ -85,7 +85,10 @@ public final class Plural {
     }
 
     //    TODO
-    public String pl(String word, int n) {
+    public String pl(int n, String word) {
+        if (n < 0) {
+            return word;
+        }
         int wordStartIdx = 0;
         while (wordStartIdx < word.length()) {
             char c = word.charAt(wordStartIdx);
@@ -101,6 +104,13 @@ public final class Plural {
         int formIdx = form.getPluralWordFormIdx(n);
         String resultWord = w.wordForms[formIdx];
         return wordStartIdx > 0 ? word.substring(0, wordStartIdx) + resultWord : resultWord;
+    }
+
+    /**
+     * N + plural. Same as n + pl(n, word).
+     */
+    public String npl(int n, String word) {
+        return n + pl(n, word);
     }
 
     //TODO
