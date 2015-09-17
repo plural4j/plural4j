@@ -1,8 +1,8 @@
-__mini-plural__  - is a Java utility to generate plural word forms.
+__plural4j__  - is a Java utility to generate plural word forms.
 
-__mini-plural__  - это Java утилита для склонения слов по формам множественного числа.
+__plural4j__  - это Java утилита для склонения слов по формам множественного числа.
 
-[![Build Status](https://travis-ci.org/mfursov/mini-plural.svg?branch=master)]	(https://travis-ci.org/mfursov/mini-plural)
+[![Build Status](https://travis-ci.org/plural4j/plural4j.svg?branch=master)]	(https://travis-ci.org/plural4j/plural4j)
 
 ## Building
 

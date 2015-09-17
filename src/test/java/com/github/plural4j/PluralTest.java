@@ -1,4 +1,4 @@
-package mini.plural;
+package com.github.plural4j;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -7,8 +7,8 @@ import org.junit.Test;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
-import static mini.plural.Plural.Word;
-import static mini.plural.Plural.parse;
+import static com.github.plural4j.Plural.Word;
+import static com.github.plural4j.Plural.parse;
 
 public class PluralTest extends Assert {
 

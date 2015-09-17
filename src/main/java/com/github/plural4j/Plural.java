@@ -1,4 +1,4 @@
-package mini.plural;
+package com.github.plural4j;
 
 import java.util.ArrayList;
 import java.util.Arrays;
