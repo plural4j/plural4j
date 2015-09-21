@@ -1,5 +1,7 @@
 package com.github.plural4j;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -29,11 +31,44 @@ public final class Plural {
     public static final String COMMENT_PREFIX = "#";
 
     /**
+     * No plural form.
+     */
+    public static final Form NO_PLURAL_FORM = new Plural.Form(1) {
+        public int getPluralWordFormIdx(int n) {
+            return 0;
+        }
+    };
+
+    /**
+     * Plural form for Arabic language.
+     */
+    public static final Form ARABIC = new Form(6) {
+        @Override
+        public int getPluralWordFormIdx(int n) {
+            return (n == 0 ? 0 : n == 1 ? 1 : n == 2 ? 2 : n % 100 >= 3 && n % 100 <= 10 ? 3 : n % 100 >= 11 ? 4 : 5);
+        }
+    };
+
+    /**
+     * Plural form for Chinese language.
+     */
+    public static final Form CHINESE = NO_PLURAL_FORM;
+
+    /**
      * Plural form for English language.
      */
     public static final Form ENGLISH = new Plural.Form(2) {
         public int getPluralWordFormIdx(int n) {
-            return n == 1 ? 0 : 1;
+            return n != 1 ? 1 : 0;
+        }
+    };
+
+    /**
+     * Plural form for French language.
+     */
+    public static final Form FRENCH = new Plural.Form(2) {
+        public int getPluralWordFormIdx(int n) {
+            return n > 1 ? 1 : 0;
         }
     };
 
@@ -42,6 +77,26 @@ public final class Plural {
      */
     public static final Form GERMAN = ENGLISH;
 
+
+    /**
+     * Plural form for Italian language.
+     */
+    public static final Form ITALIAN = ENGLISH;
+
+    /**
+     * Plural form for Japanese language.
+     */
+    public static final Form JAPANESE = NO_PLURAL_FORM;
+
+    /**
+     * Plural form for Portuguese language.
+     */
+    public static final Form PORTUGUESE = ENGLISH;
+
+    /**
+     * Plural form for Spanish language.
+     */
+    public static final Form SPANISH = ENGLISH;
 
     /**
      * Plural form for Russian language.
@@ -58,19 +113,30 @@ public final class Plural {
     private final Form form;
 
     /**
-     * Dictionary. All forms by 1-st word form.
+     * Dictionary. Keeps all word forms by 1-st word form.
      */
     private final Map<String, Word> words = new HashMap<String, Word>();
 
-    //    TODO
-    public Plural(Form form, String words) {
+    /**
+     * Creates new instance of Plural with a given form and words dictionary.
+     *
+     * @param form  plural form to use.
+     * @param words words dictionary. Format: 1 word per line, multiple word forms are separated by comma.
+     *              Example: apple,apples
+     */
+    public Plural(@NotNull Form form, @NotNull String words) {
         this(form, parse(words));
     }
 
-    //    TODO
-    public Plural(Form form, Word[] words) {
+    /**
+     * Creates new instance of Plural with a given form and words dictionary.
+     *
+     * @param form  plural form to use.
+     * @param words list of work forms.
+     */
+    public Plural(@NotNull Form form, @NotNull Word[] words) {
         this.form = form;
-        if (words == null || words.length == 0) {
+        if (words.length == 0) {
             throw new IllegalArgumentException("No words provided: " + Arrays.toString(words));
         }
         for (Word w : words) {
@@ -84,8 +150,18 @@ public final class Plural {
         }
     }
 
-    //    TODO
-    public String pl(int n, String word) {
+    /**
+     * Returns plural word for for the given number.
+     *
+     * @param n    the number.
+     * @param word the word in a single form. Leading spaces are allowed and are preserved in result.
+     * @return plural form of the word.
+     * <p/>
+     * Examples:
+     * pl(2, 'apple') will return 'apples'.
+     * pl(3, ' berry') will return ' berries'.
+     */
+    public String pl(int n, @NotNull String word) {
         if (n < 0) {
             return word;
         }
@@ -107,19 +183,21 @@ public final class Plural {
     }
 
     /**
-     * N + plural. Same as n + pl(n, word).
+     * Same as {@link #pl(int, String)} but prepends the number to the result.
+     *
+     * @param n    the number.
+     * @param word the word in a single form. Leading spaces are allowed and are preserved in result.
+     * @return plural form of the word with the number prepended.
+     * <p/>
+     * Examples:
+     * npl(2, 'apple') will return '2apples'.
+     * pl(3, ' berry') will return '3 berries'.
      */
     public String npl(int n, String word) {
         return n + pl(n, word);
     }
 
-    //TODO
-    private boolean isSpaceCharacter(char c) {
-        return c == ' ' || c == '-';
-    }
 
-
-    // TODO
     public static Word[] parse(String dictionary) {
         String lines[] = dictionary.split("\\r?\\n");
         List<Word> words = new ArrayList<Word>();
@@ -132,6 +210,11 @@ public final class Plural {
         }
         return words.toArray(new Word[words.size()]);
     }
+
+    private boolean isSpaceCharacter(char c) {
+        return c == ' ' || c == '-';
+    }
+
 
     /**
      * TODO:
