@@ -7,13 +7,13 @@ import org.junit.Test;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
-import static com.github.plural4j.Plural.Word;
+import static com.github.plural4j.Plural.WordForms;
 import static com.github.plural4j.Plural.parse;
 
 public class PluralTest extends Assert {
 
-    private Word[] russianWords;
-    private Word[] englishWords;
+    private WordForms[] russianWords;
+    private WordForms[] englishWords;
 
     @Before
     public void setUp() throws IOException {

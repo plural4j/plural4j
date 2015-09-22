@@ -33,7 +33,7 @@ public final class Plural {
     /**
      * No plural form.
      */
-    public static final Form NO_PLURAL_FORM = new Plural.Form(1) {
+    public static final Rule NO_PLURAL_FORM = new Rule(1) {
         public int getPluralWordFormIdx(int n) {
             return 0;
         }
@@ -42,7 +42,7 @@ public final class Plural {
     /**
      * Plural form for Arabic language.
      */
-    public static final Form ARABIC = new Form(6) {
+    public static final Rule ARABIC = new Rule(6) {
         @Override
         public int getPluralWordFormIdx(int n) {
             return (n == 0 ? 0 : n == 1 ? 1 : n == 2 ? 2 : n % 100 >= 3 && n % 100 <= 10 ? 3 : n % 100 >= 11 ? 4 : 5);
@@ -52,12 +52,12 @@ public final class Plural {
     /**
      * Plural form for Chinese language.
      */
-    public static final Form CHINESE = NO_PLURAL_FORM;
+    public static final Rule CHINESE = NO_PLURAL_FORM;
 
     /**
      * Plural form for English language.
      */
-    public static final Form ENGLISH = new Plural.Form(2) {
+    public static final Rule ENGLISH = new Rule(2) {
         public int getPluralWordFormIdx(int n) {
             return n != 1 ? 1 : 0;
         }
@@ -66,7 +66,7 @@ public final class Plural {
     /**
      * Plural form for French language.
      */
-    public static final Form FRENCH = new Plural.Form(2) {
+    public static final Rule FRENCH = new Rule(2) {
         public int getPluralWordFormIdx(int n) {
             return n > 1 ? 1 : 0;
         }
@@ -75,33 +75,33 @@ public final class Plural {
     /**
      * Plural form for German language.
      */
-    public static final Form GERMAN = ENGLISH;
+    public static final Rule GERMAN = ENGLISH;
 
 
     /**
      * Plural form for Italian language.
      */
-    public static final Form ITALIAN = ENGLISH;
+    public static final Rule ITALIAN = ENGLISH;
 
     /**
      * Plural form for Japanese language.
      */
-    public static final Form JAPANESE = NO_PLURAL_FORM;
+    public static final Rule JAPANESE = NO_PLURAL_FORM;
 
     /**
      * Plural form for Portuguese language.
      */
-    public static final Form PORTUGUESE = ENGLISH;
+    public static final Rule PORTUGUESE = ENGLISH;
 
     /**
      * Plural form for Spanish language.
      */
-    public static final Form SPANISH = ENGLISH;
+    public static final Rule SPANISH = ENGLISH;
 
     /**
      * Plural form for Russian language.
      */
-    public static final Form RUSSIAN = new Plural.Form(3) {
+    public static final Rule RUSSIAN = new Rule(3) {
         public int getPluralWordFormIdx(int n) {
             return (n % 10 == 1 && n % 100 != 11 ? 0 : n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 10 || n % 100 >= 20) ? 1 : 2);
         }
@@ -110,12 +110,13 @@ public final class Plural {
     /**
      * The form to use.
      */
-    private final Form form;
+    @NotNull
+    private final Rule form;
 
     /**
      * Dictionary. Keeps all word forms by 1-st word form.
      */
-    private final Map<String, Word> words = new HashMap<String, Word>();
+    private final Map<String, WordForms> words = new HashMap<String, WordForms>();
 
     /**
      * Creates new instance of Plural with a given form and words dictionary.
@@ -124,7 +125,7 @@ public final class Plural {
      * @param words words dictionary. Format: 1 word per line, multiple word forms are separated by comma.
      *              Example: apple,apples
      */
-    public Plural(@NotNull Form form, @NotNull String words) {
+    public Plural(@NotNull Rule form, @NotNull String words) {
         this(form, parse(words));
     }
 
@@ -134,12 +135,12 @@ public final class Plural {
      * @param form  plural form to use.
      * @param words list of work forms.
      */
-    public Plural(@NotNull Form form, @NotNull Word[] words) {
+    public Plural(@NotNull Rule form, @NotNull WordForms[] words) {
         this.form = form;
         if (words.length == 0) {
             throw new IllegalArgumentException("No words provided: " + Arrays.toString(words));
         }
-        for (Word w : words) {
+        for (WordForms w : words) {
             if (w.wordForms.length != form.nPlurals) {
                 throw new IllegalArgumentException("Illegal count of word forms: " + Arrays.toString(w.wordForms));
             }
@@ -153,7 +154,7 @@ public final class Plural {
     /**
      * Returns plural word for for the given number.
      *
-     * @param n    the number.
+     * @param n    the number. Positive, zero & negative value.
      * @param word the word in a single form. Leading spaces are allowed and are preserved in result.
      * @return plural form of the word.
      * <p/>
@@ -161,6 +162,7 @@ public final class Plural {
      * pl(2, 'apple') will return 'apples'.
      * pl(3, ' berry') will return ' berries'.
      */
+    @NotNull
     public String pl(int n, @NotNull String word) {
         if (n < 0) {
             return word;
@@ -173,7 +175,7 @@ public final class Plural {
             }
             wordStartIdx++;
         }
-        Word w = words.get(wordStartIdx > 0 ? word.substring(wordStartIdx) : word);
+        WordForms w = words.get(wordStartIdx > 0 ? word.substring(wordStartIdx) : word);
         if (w == null) {
             return word;
         }
@@ -185,7 +187,7 @@ public final class Plural {
     /**
      * Same as {@link #pl(int, String)} but prepends the number to the result.
      *
-     * @param n    the number.
+     * @param n    the number. Positive, zero & negative value.
      * @param word the word in a single form. Leading spaces are allowed and are preserved in result.
      * @return plural form of the word with the number prepended.
      * <p/>
@@ -193,22 +195,24 @@ public final class Plural {
      * npl(2, 'apple') will return '2apples'.
      * pl(3, ' berry') will return '3 berries'.
      */
-    public String npl(int n, String word) {
+    @NotNull
+    public String npl(int n, @NotNull String word) {
         return n + pl(n, word);
     }
 
 
-    public static Word[] parse(String dictionary) {
+    @NotNull
+    public static WordForms[] parse(@NotNull String dictionary) {
         String lines[] = dictionary.split("\\r?\\n");
-        List<Word> words = new ArrayList<Word>();
+        List<WordForms> words = new ArrayList<WordForms>();
         for (String line : lines) {
             String trimmedLine = line.trim();
             if (trimmedLine.isEmpty() || trimmedLine.startsWith(COMMENT_PREFIX)) {
                 continue;
             }
-            words.add(new Word(trimmedLine.split(",")));
+            words.add(new WordForms(trimmedLine.split(",")));
         }
-        return words.toArray(new Word[words.size()]);
+        return words.toArray(new WordForms[words.size()]);
     }
 
     private boolean isSpaceCharacter(char c) {
@@ -217,31 +221,55 @@ public final class Plural {
 
 
     /**
-     * TODO:
+     * Plural word form descriptor. Stores the number of plural form in a language and transformation function.
+     * <p/>
      * See http://localization-guide.readthedocs.org/en/latest/l10n/pluralforms.html for details.
      */
-    public static abstract class Form {
+    public static abstract class Rule {
+        /**
+         * Number of possible plural word forms.
+         */
         public final int nPlurals;
 
-        public Form(int nPlurals) {
+        /**
+         * Creates new plural form instance.
+         *
+         * @param nPlurals number of possible plural forms.
+         */
+        public Rule(int nPlurals) {
             this.nPlurals = nPlurals;
         }
 
+        /**
+         * Returns plural word form index for the given integer.
+         *
+         * @param n - some integer number. Both positive & negative values are allowed.
+         * @return index of the word form for the given integer.
+         */
         public abstract int getPluralWordFormIdx(int n);
     }
 
     /**
-     * TODO:
+     * Helper model for {@link Rule class}.
+     * List of plural forms for a single word by idx.
      */
-    public static class Word {
-        final String[] wordForms;
+    public static class WordForms {
+        /**
+         * List of word forms by idx. See {@link Rule#getPluralWordFormIdx(int)} method for details.
+         * Number of word forms is equal to {@link Rule#nPlurals} field.
+         */
+        private final String[] wordForms;
 
-        public Word(String[] wordForm) {
+        /**
+         * Creates new words list.
+         *
+         * @param wordForm List of word forms by idx. See {@link Rule#getPluralWordFormIdx(int)} method for details.
+         */
+        public WordForms(String[] wordForm) {
             if (wordForm == null || wordForm.length == 0) {
                 throw new IllegalArgumentException("Illegal word form: " + Arrays.toString(wordForm));
             }
             this.wordForms = wordForm;
         }
     }
-
 }
