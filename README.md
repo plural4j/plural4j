@@ -1,14 +1,22 @@
 __plural4j__  - is a Java utility to generate plural word forms.
 
-__plural4j__  - это Java утилита для склонения слов по формам множественного числа.
-
 [![Build Status](https://travis-ci.org/plural4j/plural4j.svg?branch=master)]	(https://travis-ci.org/plural4j/plural4j)
+
+## Maven
+```xml
+<dependency>
+  <groupId>com.github.plural4j</groupId>
+  <artifactId>plural4j</artifactId>
+  <version>1.0.0</version>
+</dependency>
+```
 
 ## Building
 
 ```
 mvn -DskipTests=true clean package install
 ```
+
 
 ## Usage
 
