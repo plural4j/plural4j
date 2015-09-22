@@ -170,7 +170,7 @@ public final class Plural {
         int wordStartIdx = 0;
         while (wordStartIdx < word.length()) {
             char c = word.charAt(wordStartIdx);
-            if (!isSpaceCharacter(c)) {
+            if (!isPrefixCharacter(c)) {
                 break;
             }
             wordStartIdx++;
@@ -215,7 +215,7 @@ public final class Plural {
         return words.toArray(new WordForms[words.size()]);
     }
 
-    private boolean isSpaceCharacter(char c) {
+    private boolean isPrefixCharacter(char c) {
         return c == ' ' || c == '-';
     }
 
