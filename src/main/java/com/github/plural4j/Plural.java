@@ -14,11 +14,14 @@ import java.util.Map;
  * <p/>
  * Usage:
  * Plural p = new Plural(Plural.RUSSIAN, russianWords);
- * p.pl("год", 1) ➟ "год"
- * p.pl("год", 2) ➟ "года"
- * p.pl("год", 5) ➟ "лет"
- * p.pl("год", 0) ➟ "лет"
+ * p.pl(1, "год") ➟ "год"
+ * p.pl(2, "год") ➟ "года"
+ * p.pl(5, "год") ➟ "лет"
+ * p.pl(0, "год") ➟ "лет"
  * <p/>
+ * p = new Plural(Plural.ENGLISH, englishWords);
+ * p.npl(1, " apple") ➟ "1 apple"
+ * p.npl(3, " apple") ➟ "3 apples"
  * <p/>
  * If you need plural forms other languages, except embedded English, German and Russian,
  * check http://localization-guide.readthedocs.org/en/latest/l10n/pluralforms.html
@@ -34,7 +37,7 @@ public final class Plural {
      * No plural form.
      */
     public static final Rule NO_PLURAL_FORM = new Rule(1) {
-        public int getPluralWordFormIdx(int n) {
+        public int getPluralWordFormIdx(long n) {
             return 0;
         }
     };
@@ -44,7 +47,7 @@ public final class Plural {
      */
     public static final Rule ARABIC = new Rule(6) {
         @Override
-        public int getPluralWordFormIdx(int n) {
+        public int getPluralWordFormIdx(long n) {
             return (n == 0 ? 0 : n == 1 ? 1 : n == 2 ? 2 : n % 100 >= 3 && n % 100 <= 10 ? 3 : n % 100 >= 11 ? 4 : 5);
         }
     };
@@ -58,7 +61,7 @@ public final class Plural {
      * Plural form for English language.
      */
     public static final Rule ENGLISH = new Rule(2) {
-        public int getPluralWordFormIdx(int n) {
+        public int getPluralWordFormIdx(long n) {
             return n != 1 ? 1 : 0;
         }
     };
@@ -67,7 +70,7 @@ public final class Plural {
      * Plural form for French language.
      */
     public static final Rule FRENCH = new Rule(2) {
-        public int getPluralWordFormIdx(int n) {
+        public int getPluralWordFormIdx(long n) {
             return n > 1 ? 1 : 0;
         }
     };
@@ -102,7 +105,7 @@ public final class Plural {
      * Plural form for Russian language.
      */
     public static final Rule RUSSIAN = new Rule(3) {
-        public int getPluralWordFormIdx(int n) {
+        public int getPluralWordFormIdx(long n) {
             return (n % 10 == 1 && n % 100 != 11 ? 0 : n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 10 || n % 100 >= 20) ? 1 : 2);
         }
     };
@@ -163,7 +166,7 @@ public final class Plural {
      * pl(3, ' berry') will return ' berries'.
      */
     @NotNull
-    public String pl(int n, @NotNull String word) {
+    public String pl(long n, @NotNull String word) {
         if (n < 0) {
             return word;
         }
@@ -185,7 +188,7 @@ public final class Plural {
     }
 
     /**
-     * Same as {@link #pl(int, String)} but prepends the number to the result.
+     * Same as {@link #pl(long, String)} but prepends the number to the result.
      *
      * @param n    the number. Positive, zero & negative value.
      * @param word the word in a single form. Leading spaces are allowed and are preserved in result.
@@ -196,7 +199,7 @@ public final class Plural {
      * pl(3, ' berry') will return '3 berries'.
      */
     @NotNull
-    public String npl(int n, @NotNull String word) {
+    public String npl(long n, @NotNull String word) {
         return n + pl(n, word);
     }
 
@@ -246,7 +249,7 @@ public final class Plural {
          * @param n - some integer number. Both positive & negative values are allowed.
          * @return index of the word form for the given integer.
          */
-        public abstract int getPluralWordFormIdx(int n);
+        public abstract int getPluralWordFormIdx(long n);
     }
 
     /**
@@ -255,7 +258,7 @@ public final class Plural {
      */
     public static class WordForms {
         /**
-         * List of word forms by idx. See {@link Rule#getPluralWordFormIdx(int)} method for details.
+         * List of word forms by idx. See {@link Rule#getPluralWordFormIdx(long)} method for details.
          * Number of word forms is equal to {@link Rule#nPlurals} field.
          */
         private final String[] wordForms;
@@ -263,7 +266,7 @@ public final class Plural {
         /**
          * Creates new words list.
          *
-         * @param wordForm List of word forms by idx. See {@link Rule#getPluralWordFormIdx(int)} method for details.
+         * @param wordForm List of word forms by idx. See {@link Rule#getPluralWordFormIdx(long)} method for details.
          */
         public WordForms(String[] wordForm) {
             if (wordForm == null || wordForm.length == 0) {
