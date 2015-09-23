@@ -30,7 +30,7 @@ p.pl(0, "год") ➟ "лет"
 p = new Plural(Plural.ENGLISH, englishWords);
 p.pl(5, "apple") ➟ "apples"
 p.npl(5, " apple") ➟ "5 apples"
-p.npl(10, " man") ➟ "100 people"
+p.npl(10, " man") ➟ "10 people"
 ```
 
 ### Requirements
