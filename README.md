@@ -33,6 +33,20 @@ p.npl(5, " apple") ➟ "5 apples"
 p.npl(10, " man") ➟ "10 people"
 ```
 
+## Adding new languages
+
+To add new language implement *Plural.Rule* class:
+
+```
+public static final Rule RUSSIAN = new Rule(3) {
+    public int getPluralWordFormIdx(long n) {
+        return (n % 10 == 1 && n % 100 != 11 ? 0 : n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 10 || n % 100 >= 20) ? 1 : 2);
+    }
+};
+```
+
+Check [*gettext*](http://localization-guide.readthedocs.org/en/latest/l10n/pluralforms.html) plural forms page for the list of predefined rules for different languages.
+
 ### Requirements
 
 Java 1.6+
