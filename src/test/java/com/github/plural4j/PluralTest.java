@@ -88,6 +88,28 @@ public class PluralTest extends Assert {
         assertEquals("-", p.pl(3, "-"));
     }
 
+    @Test
+    public void checkIgnoredPrefixCharacters1() {
+        Plural p = new Plural(Plural.ENGLISH, englishWords);
+        assertTrue(p.isIgnoredPrefixCharacter(' '));
+        assertTrue(p.isIgnoredPrefixCharacter('%'));
+        assertTrue(p.isIgnoredPrefixCharacter('-'));
+        p.setIgnoredPrefixCharacters('$');
+        assertTrue(p.isIgnoredPrefixCharacter('$'));
+        assertFalse(p.isIgnoredPrefixCharacter(' '));
+        assertFalse(p.isIgnoredPrefixCharacter('%'));
+        assertFalse(p.isIgnoredPrefixCharacter('-'));
+        assertArrayEquals(new char[]{'$'}, p.getIgnoredPrefixCharacters());
+    }
+
+    @Test
+    public void checkIgnoredPrefixCharacters2() {
+        Plural p = new Plural(Plural.ENGLISH, englishWords);
+        p.setIgnoredPrefixCharacters('$', ' ');
+        assertEquals("$ dollars", p.pl(3, "$ dollar"));
+        assertEquals("5$ dollars", p.npl(5, "$ dollar"));
+    }
+
     private static String load(String fileName) throws IOException {
         InputStreamReader reader = new InputStreamReader(PluralTest.class.getResourceAsStream("/" + fileName), "UTF-8");
         try {

@@ -122,6 +122,12 @@ public final class Plural {
     private final Map<String, WordForms> words = new HashMap<String, WordForms>();
 
     /**
+     * Set of prefix characters to ignore when processing words.
+     */
+    @NotNull
+    private char[] ignoredPrefixCharacters = new char[]{' ', '%', '-'};
+
+    /**
      * Creates new instance of Plural with a given form and words dictionary.
      *
      * @param form  plural form to use.
@@ -130,6 +136,24 @@ public final class Plural {
      */
     public Plural(@NotNull Rule form, @NotNull String words) {
         this(form, parse(words));
+    }
+
+    /**
+     * Sets list of prefixes to ignore during word  matching/processing.
+     * Example: in Plural.npl(4, "% book") both ' ' and '%' characters are ignored prefixes by default
+     * and matched word is 'book'.
+     */
+    public void setIgnoredPrefixCharacters(@NotNull char... ignoredPrefixCharacters) {
+        this.ignoredPrefixCharacters = ignoredPrefixCharacters;
+    }
+
+    /**
+     * Returns array of ignored prefix characters.
+     * By default ignored prefix characters are ' ' , '-' and '%'
+     */
+    @NotNull
+    public char[] getIgnoredPrefixCharacters() {
+        return ignoredPrefixCharacters;
     }
 
     /**
@@ -173,7 +197,7 @@ public final class Plural {
         int wordStartIdx = 0;
         while (wordStartIdx < word.length()) {
             char c = word.charAt(wordStartIdx);
-            if (!isPrefixCharacter(c)) {
+            if (!isIgnoredPrefixCharacter(c)) {
                 break;
             }
             wordStartIdx++;
@@ -218,8 +242,16 @@ public final class Plural {
         return words.toArray(new WordForms[words.size()]);
     }
 
-    private boolean isPrefixCharacter(char c) {
-        return c == ' ' || c == '-';
+    /**
+     * Returns true if 'c' is one of the ignored prefix character.
+     */
+    public boolean isIgnoredPrefixCharacter(char c) {
+        for (char ignoredChar : ignoredPrefixCharacters) {
+            if (c == ignoredChar) {
+                return true;
+            }
+        }
+        return false;
     }
 
 

@@ -10,8 +10,9 @@ month,months
 quoter,quarters
 year,years
 
-# другие полезные слова
+# other useful words
 user,users
 client,clients
 retry,retries
+dollar,dollars
 
