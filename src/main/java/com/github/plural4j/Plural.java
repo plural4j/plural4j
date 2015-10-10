@@ -300,8 +300,9 @@ public final class Plural {
          *
          * @param wordForm List of word forms by idx. See {@link Rule#getPluralWordFormIdx(long)} method for details.
          */
-        public WordForms(String[] wordForm) {
-            if (wordForm == null || wordForm.length == 0) {
+        public WordForms(@NotNull String[] wordForm) {
+            //noinspection ConstantConditions
+            if (wordForm.length == 0) {
                 throw new IllegalArgumentException("Illegal word form: " + Arrays.toString(wordForm));
             }
             this.wordForms = wordForm;
